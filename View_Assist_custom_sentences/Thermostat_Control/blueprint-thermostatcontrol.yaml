@@ -60,7 +60,11 @@ action:
       language: !input language
       thermostat: !input thermostat
       view: !input view
-      amount: "{{ trigger.slots.amount }}"
+      # Not all conversation commands provide slots (e.g. "show thermostat").
+      # Use dict access + default to avoid UndefinedError.
+      amount: >-
+        {% set a = trigger.get('slots', {}).get('amount') %}
+        {{ (a if a is not none else 0) | float }}
       translations:
         en:
           responses:
